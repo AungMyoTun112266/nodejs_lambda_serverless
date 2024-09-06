@@ -1,0 +1,50 @@
+service: express-lambda-service
+
+
+
+provider:
+  name: aws
+  runtime: nodejs18.x # Ensure this matches the Node.js version you're using
+  region: ap-southeast-1 # Specify your desired AWS region
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "*"
+
+functions:
+  app:
+    handler: dist/lambda.lambdaHandler # Adjust if your build directory is different
+    events:
+      - http:
+          path: /api/users
+          method: get
+      - http:
+          path: /api/users
+          method: post
+      - http:
+          path: /api/users/{id}
+          method: get
+      - http:
+          path: /api/users/{id}
+          method: put
+      - http:
+          path: /api/users/{id}
+          method: delete
+
+package:
+  include:
+    - dist/**
+    - node_modules/**
+    - package.json
+    - package-lock.json
+  exclude:
+    - .git/**
+    - .env
+
+
